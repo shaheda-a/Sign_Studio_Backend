@@ -1162,6 +1162,267 @@ class DatabaseSeeder extends Seeder
             'approved_at'     => now(),
             'created_by'      => $adminUser->id,
         ]);
+
+        // ────────────────────────────────────────────────────
+        // PHASE 9 — DISPATCH & INSTALLATION
+        // ────────────────────────────────────────────────────
+
+        // 74. Seed Dispatch
+        $dispatch1 = \App\Models\Dispatch::create([
+            'order_id' => $order1->id,
+            'dispatch_number' => 'DSP-' . date('Ymd') . '-001',
+            'vehicle_number' => 'KA-01-AB-1234',
+            'driver_name' => 'Raju Driver',
+            'driver_phone' => '9876543210',
+            'transport_company' => 'Safe Express',
+            'status' => 'dispatched',
+            'created_by' => $adminUser->id,
+            'dispatched_at' => now(),
+        ]);
+
+        // 75. Seed Packing Checklist
+        \App\Models\PackingChecklist::create([
+            'dispatch_id' => $dispatch1->id,
+            'item_name' => 'Main Sign Board',
+            'is_packed' => true,
+            'created_by' => $adminUser->id,
+        ]);
+
+        // 76. Seed Dispatch Item
+        $orderItem1 = \App\Models\OrderItem::where('order_id', $order1->id)->first();
+        if ($orderItem1) {
+            \App\Models\DispatchItem::create([
+                'dispatch_id' => $dispatch1->id,
+                'order_item_id' => $orderItem1->id,
+                'qty_dispatched' => 1,
+                'package_number' => 'PKG-001',
+                'created_by' => $adminUser->id,
+            ]);
+        }
+
+        // 77. Seed Dispatch Approval
+        \App\Models\DispatchApproval::create([
+            'dispatch_id' => $dispatch1->id,
+            'approved_by' => $adminUser->id,
+            'status' => 'approved',
+            'created_by' => $adminUser->id,
+            'approved_at' => now(),
+        ]);
+
+        // 78. Seed Dispatch Proof
+        \App\Models\DispatchProof::create([
+            'dispatch_id' => $dispatch1->id,
+            'proof_type' => 'Vehicle Photo',
+            'file_path' => '/uploads/proofs/dispatch.jpg',
+            'created_by' => $adminUser->id,
+        ]);
+
+        // 79. Seed Vehicle Tracking Log
+        \App\Models\VehicleTrackingLog::create([
+            'dispatch_id' => $dispatch1->id,
+            'latitude' => 12.9716,
+            'longitude' => 77.5946,
+            'location_name' => 'Bangalore Checkpoint',
+            'tracked_at' => now(),
+        ]);
+
+        // 80. Seed Delivery Confirmation
+        \App\Models\DeliveryConfirmation::create([
+            'dispatch_id' => $dispatch1->id,
+            'received_by' => 'John Receiver',
+            'otp_verified' => true,
+            'confirmed_at' => now(),
+            'created_by' => $adminUser->id,
+        ]);
+
+        // 81. Seed Installation
+        $installation1 = \App\Models\Installation::create([
+            'order_id' => $order1->id,
+            'dispatch_id' => $dispatch1->id,
+            'assigned_to' => $adminUser->id,
+            'installation_number' => 'INS-' . date('Ymd') . '-001',
+            'status' => 'completed',
+            'completion_percentage' => 100,
+            'created_by' => $adminUser->id,
+            'actual_date' => now()->toDateString(),
+        ]);
+
+        // 82. Seed Installation Material Confirmation
+        \App\Models\InstallationMaterialConfirmation::create([
+            'installation_id' => $installation1->id,
+            'item_id' => $item1->id,
+            'expected_qty' => 5,
+            'received_qty' => 5,
+            'is_confirmed' => true,
+            'created_by' => $adminUser->id,
+        ]);
+
+        // 83. Seed Installation GPS Log
+        \App\Models\InstallationGpsLog::create([
+            'installation_id' => $installation1->id,
+            'user_id' => $adminUser->id,
+            'latitude' => 12.9716,
+            'longitude' => 77.5946,
+            'log_type' => 'check-in',
+            'tracked_at' => now(),
+        ]);
+
+        // 84. Seed Installation Photo
+        \App\Models\InstallationPhoto::create([
+            'installation_id' => $installation1->id,
+            'type' => 'completed',
+            'file_path' => '/uploads/installations/photo.jpg',
+            'created_by' => $adminUser->id,
+        ]);
+
+        // 85. Seed Installation Correction
+        \App\Models\InstallationCorrection::create([
+            'installation_id' => $installation1->id,
+            'issue_description' => 'Minor scratch on edge',
+            'corrective_action' => 'Touched up with paint',
+            'status' => 'resolved',
+            'created_by' => $adminUser->id,
+            'resolved_at' => now(),
+        ]);
+
+        // 86. Seed Installation Signoff
+        \App\Models\InstallationSignoff::create([
+            'installation_id' => $installation1->id,
+            'customer_name' => 'John Customer',
+            'satisfaction_score' => 5,
+            'created_by' => $adminUser->id,
+            'signed_at' => now(),
+        ]);
+
+        // 87. Seed Installation Score
+        \App\Models\InstallationScore::create([
+            'installation_id' => $installation1->id,
+            'quality_score' => 5,
+            'timeliness_score' => 4,
+            'customer_satisfaction' => 5,
+            'overall_score' => 4.67,
+            'created_by' => $adminUser->id,
+        ]);
+        // ----------------------------------------------------
+        // PHASE 10: INVOICING, FINANCIAL CONTROL & SUPPORT
+        // ----------------------------------------------------
+
+        // 88. Seed Warranty Card
+        $warrantyCard = \App\Models\WarrantyCard::create([
+            'customer_id' => $customer1->id,
+            'order_id' => $order1->id,
+            'warranty_number' => 'WAR-1001',
+            'valid_from' => now(),
+            'valid_till' => now()->addYear(),
+            'terms' => 'Standard 1 year warranty',
+            'issued_by' => $adminUser->id,
+            'created_by' => $adminUser->id,
+        ]);
+
+        // 89. Seed Service Ticket
+        $ticket = \App\Models\ServiceTicket::create([
+            'customer_id' => $customer1->id,
+            'order_id' => $order1->id,
+            'ticket_number' => 'TKT-2001',
+            'issue_description' => 'Light not turning on',
+            'issue_type' => 'electrical',
+            'priority' => 'high',
+            'is_warranty' => true,
+            'warranty_card_id' => $warrantyCard->id,
+            'status' => 'open',
+            'created_by' => $adminUser->id,
+        ]);
+
+        // 90. Seed Service Assignment
+        \App\Models\ServiceAssignment::create([
+            'ticket_id' => $ticket->id,
+            'technician_id' => $adminUser->id,
+            'visit_date' => now()->addDay(),
+            'visit_time' => '10:00:00',
+            'status' => 'scheduled',
+            'created_by' => $adminUser->id,
+        ]);
+
+        // 91. Seed Invoice
+        $invoice = \App\Models\Invoice::create([
+            'order_id' => $order1->id,
+            'customer_id' => $customer1->id,
+            'branch_id' => $branchMain->id,
+            'invoice_number' => 'INV-3001',
+            'invoice_date' => now(),
+            'due_date' => now()->addDays(30),
+            'sub_total' => 50000,
+            'tax_cgst' => 4500,
+            'tax_sgst' => 4500,
+            'total' => 59000,
+            'balance_due' => 59000,
+            'status' => 'unpaid',
+            'created_by' => $adminUser->id,
+        ]);
+
+        // 92. Seed Invoice Item
+        \App\Models\InvoiceItem::create([
+            'invoice_id' => $invoice->id,
+            'description' => 'Main Signage Panel',
+            'qty' => 1,
+            'rate' => 50000,
+            'amount' => 50000,
+            'created_by' => $adminUser->id,
+        ]);
+
+        // 93. Seed Receipt
+        $receipt = \App\Models\Receipt::create([
+            'invoice_id' => $invoice->id,
+            'customer_id' => $customer1->id,
+            'receipt_number' => 'RCT-4001',
+            'amount_received' => 20000,
+            'payment_mode' => 'bank_transfer',
+            'date' => now(),
+            'created_by' => $adminUser->id,
+        ]);
+
+        // Update invoice balance manually for seeder
+        $invoice->update([
+            'amount_paid' => 20000,
+            'balance_due' => 39000,
+            'status' => 'partial'
+        ]);
+
+        // 94. Seed Expense
+        \App\Models\Expense::create([
+            'branch_id' => $branchMain->id,
+            'expense_number' => 'EXP-5001',
+            'category' => 'Travel',
+            'description' => 'Site visit travel expense',
+            'amount' => 500,
+            'total_amount' => 500,
+            'status' => 'approved',
+            'approved_by' => $adminUser->id,
+            'created_by' => $adminUser->id,
+        ]);
+
+        // 95. Seed Customer Ledger
+        \App\Models\CustomerLedger::create([
+            'customer_id' => $customer1->id,
+            'type' => 'debit',
+            'reference_type' => 'invoice',
+            'reference_id' => $invoice->id,
+            'amount' => 59000,
+            'description' => 'Invoice ' . $invoice->invoice_number,
+            'transaction_date' => now(),
+            'created_by' => $adminUser->id,
+        ]);
+
+        \App\Models\CustomerLedger::create([
+            'customer_id' => $customer1->id,
+            'type' => 'credit',
+            'reference_type' => 'receipt',
+            'reference_id' => $receipt->id,
+            'amount' => 20000,
+            'description' => 'Receipt ' . $receipt->receipt_number,
+            'transaction_date' => now(),
+            'created_by' => $adminUser->id,
+        ]);
     }
 }
 

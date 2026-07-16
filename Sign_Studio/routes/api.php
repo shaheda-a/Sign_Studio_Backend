@@ -64,6 +64,15 @@ use App\Http\Controllers\Api\InventoryTransactionController;
 use App\Http\Controllers\Api\MaterialKittingController;
 use App\Http\Controllers\Api\MaterialConsumptionController;
 use App\Http\Controllers\Api\VendorPaymentController;
+// Phase 9 - Dispatch & Installation
+use App\Http\Controllers\Api\DispatchController;
+use App\Http\Controllers\Api\InstallationController;
+// Phase 10 - Invoicing, Financial Control & Support
+use App\Http\Controllers\Api\ServiceTicketController;
+use App\Http\Controllers\Api\InvoiceController;
+use App\Http\Controllers\Api\ReceiptController;
+use App\Http\Controllers\Api\ExpenseController;
+use App\Http\Controllers\Api\LedgerController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -324,5 +333,21 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Vendor Payments
     Route::apiResource('vendor-payments', VendorPaymentController::class)->only(['index', 'store']);
-});
 
+    // ────────────────────────────────────────────────────
+    // PHASE 9 — DISPATCH & INSTALLATION
+    // ────────────────────────────────────────────────────
+
+    Route::apiResource('dispatches', DispatchController::class);
+    Route::apiResource('installations', InstallationController::class);
+
+    // ────────────────────────────────────────────────────
+    // PHASE 10 — INVOICING, FINANCIAL CONTROL & SUPPORT
+    // ────────────────────────────────────────────────────
+
+    Route::apiResource('service-tickets', ServiceTicketController::class);
+    Route::apiResource('invoices', InvoiceController::class);
+    Route::apiResource('receipts', ReceiptController::class);
+    Route::apiResource('expenses', ExpenseController::class);
+    Route::apiResource('ledgers', LedgerController::class);
+});
