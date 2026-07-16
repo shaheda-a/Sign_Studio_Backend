@@ -1423,6 +1423,48 @@ class DatabaseSeeder extends Seeder
             'transaction_date' => now(),
             'created_by' => $adminUser->id,
         ]);
+        // ────────────────────────────────────────────────────
+        // PHASE 11 — HR, PAYROLL, DAILY AUDIT & COMMS
+        // ────────────────────────────────────────────────────
+
+        // 96. Seed Attendance
+        $attendance = \App\Models\Attendance::create([
+            'user_id' => $adminUser->id,
+            'date' => now()->toDateString(),
+            'punch_in' => now()->startOfDay()->addHours(9),
+            'status' => 'present',
+            'work_hours' => 8,
+            'created_by' => $adminUser->id,
+        ]);
+
+        // 97. Seed Recruitment
+        $recruitment = \App\Models\Recruitment::create([
+            'department_id' => $deptSales->id,
+            'position' => 'Senior Sales Executive',
+            'budget_min' => 40000,
+            'budget_max' => 60000,
+            'status' => 'open',
+            'created_by' => $adminUser->id,
+        ]);
+
+        // 98. Seed Help Ticket
+        \App\Models\HelpTicket::create([
+            'raised_by' => $adminUser->id,
+            'department_id' => $deptSales->id,
+            'ticket_number' => 'HT-1001',
+            'issue' => 'Cannot access the CRM dashboard',
+            'priority' => 'high',
+            'status' => 'open',
+            'created_by' => $adminUser->id,
+        ]);
+        
+        // 99. Seed Notification
+        \App\Models\Notification::create([
+            'user_id' => $adminUser->id,
+            'title' => 'System Update',
+            'message' => 'HR module has been activated.',
+            'type' => 'system',
+        ]);
     }
 }
 

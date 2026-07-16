@@ -73,6 +73,19 @@ use App\Http\Controllers\Api\InvoiceController;
 use App\Http\Controllers\Api\ReceiptController;
 use App\Http\Controllers\Api\ExpenseController;
 use App\Http\Controllers\Api\LedgerController;
+// Phase 11 - HR, Payroll, Daily Audit & Comms
+use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\LeaveController;
+use App\Http\Controllers\PayrollController;
+use App\Http\Controllers\RecruitmentController;
+use App\Http\Controllers\CandidateController;
+use App\Http\Controllers\InterviewController;
+use App\Http\Controllers\DailyChecklistController;
+use App\Http\Controllers\HelpTicketController;
+use App\Http\Controllers\InternalRequestController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\CommunicationLogController;
+use App\Http\Controllers\PerformanceScoreController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -350,4 +363,21 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('receipts', ReceiptController::class);
     Route::apiResource('expenses', ExpenseController::class);
     Route::apiResource('ledgers', LedgerController::class);
+
+    // ────────────────────────────────────────────────────
+    // PHASE 11 — HR, PAYROLL, DAILY AUDIT & COMMS
+    // ────────────────────────────────────────────────────
+
+    Route::apiResource('attendances', AttendanceController::class);
+    Route::apiResource('leaves', LeaveController::class);
+    Route::apiResource('payrolls', PayrollController::class);
+    Route::apiResource('recruitments', RecruitmentController::class);
+    Route::apiResource('candidates', CandidateController::class);
+    Route::apiResource('interviews', InterviewController::class);
+    Route::apiResource('daily-checklists', DailyChecklistController::class);
+    Route::apiResource('help-tickets', HelpTicketController::class);
+    Route::apiResource('internal-requests', InternalRequestController::class);
+    Route::apiResource('notifications', NotificationController::class);
+    Route::apiResource('communication-logs', CommunicationLogController::class);
+    Route::apiResource('performance-scores', PerformanceScoreController::class);
 });
