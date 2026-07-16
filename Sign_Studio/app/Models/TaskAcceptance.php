@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class TaskAcceptance extends Model
 {
+    protected $table = 'task_acceptance';
     public $timestamps = false;
     protected $fillable = ['task_id', 'user_id', 'status', 'rejection_reason', 'responded_at'];
     protected $casts    = ['responded_at' => 'datetime', 'created_at' => 'datetime'];

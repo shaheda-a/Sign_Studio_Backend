@@ -36,6 +36,23 @@ use App\Http\Controllers\QuotationController;
 use App\Http\Controllers\QuotationItemController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\JobCardController;
+// Phase 7 — Tasks
+use App\Http\Controllers\TaskController;
+use App\Http\Controllers\TaskAcceptanceController;
+use App\Http\Controllers\TaskPauseLogController;
+use App\Http\Controllers\TaskDelayController;
+use App\Http\Controllers\TaskEscalationController;
+use App\Http\Controllers\TaskBottleneckController;
+use App\Http\Controllers\TaskVerificationController;
+use App\Http\Controllers\TaskProofController;
+// Phase 7 — Production
+use App\Http\Controllers\ProductionPlanController;
+use App\Http\Controllers\ProductionStageController;
+use App\Http\Controllers\ProductionProofController;
+use App\Http\Controllers\ProductionDelayController;
+use App\Http\Controllers\ProductionScoreController;
+use App\Http\Controllers\QcChecklistController;
+use App\Http\Controllers\ReworkLogController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -192,4 +209,73 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('job-cards/{job_card}/restore', [JobCardController::class, 'restore']);
     Route::post('job-cards/{job_card}/lock-scope', [JobCardController::class, 'lockScope']);
     Route::apiResource('job-cards', JobCardController::class);
+
+    // ────────────────────────────────────────────────────
+    // PHASE 7 — TASKS
+    // ────────────────────────────────────────────────────
+
+    // Tasks
+    Route::post('tasks/{task}/restore', [TaskController::class, 'restore']);
+    Route::post('tasks/{task}/start', [TaskController::class, 'start']);
+    Route::post('tasks/{task}/complete', [TaskController::class, 'complete']);
+    Route::apiResource('tasks', TaskController::class);
+
+    // Task Acceptances
+    Route::apiResource('task-acceptances', TaskAcceptanceController::class)->only(['index', 'store', 'show']);
+
+    // Task Pause Logs
+    Route::post('task-pause-logs/{task_pause_log}/resume', [TaskPauseLogController::class, 'resume']);
+    Route::apiResource('task-pause-logs', TaskPauseLogController::class)->only(['index', 'store', 'show']);
+
+    // Task Delays
+    Route::apiResource('task-delays', TaskDelayController::class)->only(['index', 'store', 'show', 'update', 'destroy']);
+
+    // Task Escalations
+    Route::post('task-escalations/{task_escalation}/resolve', [TaskEscalationController::class, 'resolve']);
+    Route::apiResource('task-escalations', TaskEscalationController::class)->only(['index', 'store', 'show', 'destroy']);
+
+    // Task Bottlenecks
+    Route::post('task-bottlenecks/{task_bottleneck}/resolve', [TaskBottleneckController::class, 'resolve']);
+    Route::apiResource('task-bottlenecks', TaskBottleneckController::class)->only(['index', 'store', 'show', 'destroy']);
+
+    // Task Verifications
+    Route::apiResource('task-verifications', TaskVerificationController::class)->only(['index', 'store', 'show', 'destroy']);
+
+    // Task Proofs
+    Route::post('task-proofs/{task_proof}/restore', [TaskProofController::class, 'restore']);
+    Route::apiResource('task-proofs', TaskProofController::class)->only(['index', 'store', 'show', 'destroy']);
+
+    // ────────────────────────────────────────────────────
+    // PHASE 7 — PRODUCTION
+    // ────────────────────────────────────────────────────
+
+    // Production Plans
+    Route::post('production-plans/{production_plan}/restore', [ProductionPlanController::class, 'restore']);
+    Route::get('production-plans/{production_plan}/qc-summary', [ProductionPlanController::class, 'qcSummary']);
+    Route::apiResource('production-plans', ProductionPlanController::class);
+
+    // Production Stages
+    Route::post('production-stages/{production_stage}/restore', [ProductionStageController::class, 'restore']);
+    Route::post('production-stages/{production_stage}/start', [ProductionStageController::class, 'start']);
+    Route::post('production-stages/{production_stage}/complete', [ProductionStageController::class, 'complete']);
+    Route::apiResource('production-stages', ProductionStageController::class);
+
+    // Production Proofs
+    Route::post('production-proofs/{production_proof}/restore', [ProductionProofController::class, 'restore']);
+    Route::apiResource('production-proofs', ProductionProofController::class)->only(['index', 'store', 'show', 'destroy']);
+
+    // Production Delays
+    Route::apiResource('production-delays', ProductionDelayController::class)->only(['index', 'store', 'show', 'destroy']);
+
+    // Production Scores
+    Route::apiResource('production-scores', ProductionScoreController::class)->only(['index', 'store', 'show', 'update', 'destroy']);
+
+    // QC Checklists
+    Route::post('qc-checklists/{qc_checklist}/restore', [QcChecklistController::class, 'restore']);
+    Route::apiResource('qc-checklists', QcChecklistController::class);
+
+    // Rework Logs
+    Route::post('rework-logs/{rework_log}/restore', [ReworkLogController::class, 'restore']);
+    Route::apiResource('rework-logs', ReworkLogController::class);
 });
+

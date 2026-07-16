@@ -754,5 +754,229 @@ class DatabaseSeeder extends Seeder
             'validated_at' => now(),
             'created_by'   => $adminUser->id,
         ]);
+
+        // ════════════════════════════════════════════
+        // PHASE 7 — TASKS & PRODUCTION
+        // ════════════════════════════════════════════
+
+        // 45. Seed Tasks
+        $task1 = \App\Models\Task::create([
+            'order_id'           => $order1->id,
+            'department_id'      => $deptDesign->id,
+            'assigned_to'        => $adminUser->id,
+            'task_number'        => 'TSK-001',
+            'title'              => 'Prepare Production Files for Main Entrance Fascia Sign',
+            'description'        => 'Generate print-ready AI files, set cut guides, and send to RIP station.',
+            'priority'           => 'high',
+            'planned_start'      => now()->addDay(),
+            'planned_end'        => now()->addDays(3),
+            'planned_time_hours' => 8.0,
+            'status'             => 'pending',
+            'created_by'         => $adminUser->id,
+        ]);
+
+        $task2 = \App\Models\Task::create([
+            'order_id'           => $order1->id,
+            'department_id'      => $deptDesign->id,
+            'assigned_to'        => $adminUser->id,
+            'task_number'        => 'TSK-002',
+            'title'              => 'QC Inspection — ACM Fascia Sign',
+            'description'        => 'Inspect size accuracy, surface finish, and LED lighting before packing.',
+            'priority'           => 'normal',
+            'planned_start'      => now()->addDays(4),
+            'planned_end'        => now()->addDays(5),
+            'planned_time_hours' => 4.0,
+            'status'             => 'pending',
+            'created_by'         => $adminUser->id,
+        ]);
+
+        // 46. Seed Task Logs (via embedded helper)
+        \App\Models\TaskLog::create([
+            'task_id'    => $task1->id,
+            'user_id'    => $adminUser->id,
+            'action'     => 'created',
+            'notes'      => 'Task created and assigned to Design team.',
+        ]);
+
+        // 47. Seed Task Acceptance
+        \App\Models\TaskAcceptance::create([
+            'task_id'      => $task1->id,
+            'user_id'      => $adminUser->id,
+            'status'       => 'accepted',
+            'responded_at' => now(),
+        ]);
+
+        // 48. Seed Task Proof
+        \App\Models\TaskProof::create([
+            'task_id'    => $task1->id,
+            'file_path'  => 'task-proofs/tsk001-artwork.pdf',
+            'file_type'  => 'application/pdf',
+            'notes'      => 'Production-ready artwork file uploaded.',
+            'created_by' => $adminUser->id,
+        ]);
+
+        // 49. Seed Task Delay
+        \App\Models\TaskDelay::create([
+            'task_id'          => $task2->id,
+            'delay_reason'     => 'Material delivery delayed by vendor — ACM panels not arrived.',
+            'escalation_level' => 1,
+            'escalated_to'     => $adminUser->id,
+            'created_by'       => $adminUser->id,
+        ]);
+
+        // 50. Seed Task Escalation
+        \App\Models\TaskEscalation::create([
+            'task_id'        => $task2->id,
+            'escalated_from' => $adminUser->id,
+            'escalated_to'   => $adminUser->id,
+            'reason'         => 'Material delay exceeding SLA. Escalating to Production Head.',
+            'level'          => 1,
+            'status'         => 'open',
+            'created_by'     => $adminUser->id,
+        ]);
+
+        // 51. Seed Task Bottleneck
+        \App\Models\TaskBottleneck::create([
+            'task_id'         => $task2->id,
+            'bottleneck_type' => 'Material Unavailability',
+            'description'     => 'ACM panels out of stock. Production blocked pending reorder.',
+            'identified_by'   => $adminUser->id,
+            'created_by'      => $adminUser->id,
+        ]);
+
+        // 52. Seed Task Verification
+        \App\Models\TaskVerification::create([
+            'task_id'     => $task1->id,
+            'verified_by' => $adminUser->id,
+            'status'      => 'approved',
+            'remarks'     => 'Production files reviewed and approved by Design Head.',
+            'verified_at' => now(),
+            'created_by'  => $adminUser->id,
+        ]);
+
+        // 53. Seed Job Card for Production Plan
+        $jobCard = \App\Models\JobCard::where('order_id', $order1->id)->first();
+
+        // 54. Seed Production Plan
+        $productionPlan1 = \App\Models\ProductionPlan::create([
+            'order_id'    => $order1->id,
+            'job_card_id' => $jobCard->id,
+            'plan_number' => 'PP-001',
+            'start_date'  => now()->addDay()->toDateString(),
+            'end_date'    => now()->addDays(10)->toDateString(),
+            'status'      => 'planned',
+            'notes'       => 'ACM Fascia Sign production plan. 6 stages.',
+            'created_by'  => $adminUser->id,
+        ]);
+
+        // 55. Seed Production Stages
+        $stage1 = \App\Models\ProductionStage::create([
+            'production_plan_id' => $productionPlan1->id,
+            'stage_name'         => 'File Preparation',
+            'sort_order'         => 1,
+            'planned_start'      => now()->addDay(),
+            'planned_end'        => now()->addDays(2),
+            'status'             => 'pending',
+            'assigned_to'        => $adminUser->id,
+            'created_by'         => $adminUser->id,
+        ]);
+
+        $stage2 = \App\Models\ProductionStage::create([
+            'production_plan_id' => $productionPlan1->id,
+            'stage_name'         => 'ACM Cutting',
+            'sort_order'         => 2,
+            'planned_start'      => now()->addDays(2),
+            'planned_end'        => now()->addDays(4),
+            'status'             => 'pending',
+            'assigned_to'        => $adminUser->id,
+            'created_by'         => $adminUser->id,
+        ]);
+
+        \App\Models\ProductionStage::create([
+            'production_plan_id' => $productionPlan1->id,
+            'stage_name'         => 'Fabrication & LED Fitting',
+            'sort_order'         => 3,
+            'planned_start'      => now()->addDays(4),
+            'planned_end'        => now()->addDays(7),
+            'status'             => 'pending',
+            'assigned_to'        => $adminUser->id,
+            'created_by'         => $adminUser->id,
+        ]);
+
+        // 56. Seed Production Proof
+        \App\Models\ProductionProof::create([
+            'production_plan_id' => $productionPlan1->id,
+            'stage_id'           => $stage1->id,
+            'file_path'          => 'production-proofs/pp001-stage1-file.jpg',
+            'file_type'          => 'image/jpeg',
+            'notes'              => 'Production file completed and approved.',
+            'uploaded_by'        => $adminUser->id,
+            'created_by'         => $adminUser->id,
+        ]);
+
+        // 57. Seed Production Delay
+        \App\Models\ProductionDelay::create([
+            'production_plan_id' => $productionPlan1->id,
+            'stage_id'           => $stage2->id,
+            'delay_reason'       => 'CNC machine breakdown for 6 hours. Back in service after repair.',
+            'delay_hours'        => 6.0,
+            'reported_by'        => $adminUser->id,
+            'created_by'         => $adminUser->id,
+        ]);
+
+        // 58. Seed Production Score
+        \App\Models\ProductionScore::create([
+            'production_plan_id' => $productionPlan1->id,
+            'quality_score'      => 90,
+            'efficiency_score'   => 78,
+            'on_time_score'      => 85,
+            'overall_score'      => round((90 + 78 + 85) / 3, 2),
+            'scored_by'          => $adminUser->id,
+            'created_by'         => $adminUser->id,
+        ]);
+
+        // 59. Seed QC Checklist
+        \App\Models\QcChecklist::create([
+            'production_plan_id' => $productionPlan1->id,
+            'item_name'          => 'Size accuracy matches approved measurement sheet',
+            'is_passed'          => 1,
+            'rework_required'    => 0,
+            'inspected_by'       => $adminUser->id,
+            'notes'              => 'Dimensions match within ±2mm tolerance.',
+            'created_by'         => $adminUser->id,
+        ]);
+
+        \App\Models\QcChecklist::create([
+            'production_plan_id' => $productionPlan1->id,
+            'item_name'          => 'LED illumination uniform and flicker-free',
+            'is_passed'          => 1,
+            'rework_required'    => 0,
+            'inspected_by'       => $adminUser->id,
+            'notes'              => 'All LEDs tested for 30 minutes. No flicker detected.',
+            'created_by'         => $adminUser->id,
+        ]);
+
+        \App\Models\QcChecklist::create([
+            'production_plan_id' => $productionPlan1->id,
+            'item_name'          => 'Surface finish — no scratches or dents visible',
+            'is_passed'          => 0,
+            'rework_required'    => 1,
+            'inspected_by'       => $adminUser->id,
+            'notes'              => 'Minor scratch found on bottom-right corner. Rework required.',
+            'created_by'         => $adminUser->id,
+        ]);
+
+        // 60. Seed Rework Log
+        \App\Models\ReworkLog::create([
+            'production_plan_id' => $productionPlan1->id,
+            'stage_id'           => $stage2->id,
+            'reason'             => 'Minor surface scratch on bottom-right panel edge. Re-lamination required.',
+            'cost_incurred'      => 500.00,
+            'time_hours'         => 2.0,
+            'assigned_to'        => $adminUser->id,
+            'status'             => 'pending',
+            'created_by'         => $adminUser->id,
+        ]);
     }
 }
+
