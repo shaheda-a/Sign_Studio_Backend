@@ -53,6 +53,17 @@ use App\Http\Controllers\ProductionDelayController;
 use App\Http\Controllers\ProductionScoreController;
 use App\Http\Controllers\QcChecklistController;
 use App\Http\Controllers\ReworkLogController;
+// Phase 8 - Inventory & Procurement
+use App\Http\Controllers\Api\ItemController;
+use App\Http\Controllers\Api\StockAlertController;
+use App\Http\Controllers\Api\VendorController;
+use App\Http\Controllers\Api\VendorQuotationController;
+use App\Http\Controllers\Api\PurchaseRequestController;
+use App\Http\Controllers\Api\PurchaseOrderController;
+use App\Http\Controllers\Api\InventoryTransactionController;
+use App\Http\Controllers\Api\MaterialKittingController;
+use App\Http\Controllers\Api\MaterialConsumptionController;
+use App\Http\Controllers\Api\VendorPaymentController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -277,5 +288,41 @@ Route::middleware('auth:sanctum')->group(function () {
     // Rework Logs
     Route::post('rework-logs/{rework_log}/restore', [ReworkLogController::class, 'restore']);
     Route::apiResource('rework-logs', ReworkLogController::class);
+
+    // ────────────────────────────────────────────────────
+    // PHASE 8 — INVENTORY & PROCUREMENT
+    // ────────────────────────────────────────────────────
+
+    // Items
+    Route::apiResource('items', ItemController::class);
+
+    // Stock Alerts
+    Route::post('stock-alerts/{stock_alert}/resolve', [StockAlertController::class, 'resolve']);
+    Route::apiResource('stock-alerts', StockAlertController::class)->only(['index', 'show']);
+
+    // Vendors
+    Route::apiResource('vendors', VendorController::class);
+
+    // Vendor Quotations
+    Route::apiResource('vendor-quotations', VendorQuotationController::class);
+
+    // Purchase Requests
+    Route::apiResource('purchase-requests', PurchaseRequestController::class)->only(['index', 'store', 'show']);
+
+    // Purchase Orders
+    Route::apiResource('purchase-orders', PurchaseOrderController::class)->only(['index', 'store', 'show']);
+
+    // Inventory Transactions
+    Route::apiResource('inventory-transactions', InventoryTransactionController::class)->only(['index', 'store']);
+
+    // Material Kitting
+    Route::post('material-kittings/{material_kitting}/issue', [MaterialKittingController::class, 'issueKit']);
+    Route::apiResource('material-kittings', MaterialKittingController::class)->only(['index', 'store']);
+
+    // Material Consumption
+    Route::apiResource('material-consumptions', MaterialConsumptionController::class)->only(['index', 'store']);
+
+    // Vendor Payments
+    Route::apiResource('vendor-payments', VendorPaymentController::class)->only(['index', 'store']);
 });
 

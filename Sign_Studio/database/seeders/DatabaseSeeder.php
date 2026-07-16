@@ -977,6 +977,191 @@ class DatabaseSeeder extends Seeder
             'status'             => 'pending',
             'created_by'         => $adminUser->id,
         ]);
+
+        // ════════════════════════════════════════════
+        // PHASE 8 — INVENTORY & PROCUREMENT
+        // ════════════════════════════════════════════
+
+        // 61. Seed Items
+        $item1 = \App\Models\Item::create([
+            'sku_code'      => 'ITM-ACM-001',
+            'name'          => 'ACM Panel 3mm (Alubond)',
+            'description'   => '3mm Aluminum Composite Material panel suitable for outdoor signage.',
+            'category'      => 'Raw Material',
+            'sub_category'  => 'Panels',
+            'uom'           => 'Sqft',
+            'reorder_level' => 100,
+            'current_stock' => 500,
+            'hsn_code'      => '76061200',
+            'tax_rate'      => 18.00,
+            'unit_cost'     => 120.00,
+            'is_active'     => 1,
+            'created_by'    => $adminUser->id,
+        ]);
+
+        $item2 = \App\Models\Item::create([
+            'sku_code'      => 'ITM-LED-12V',
+            'name'          => '12V LED Module (White)',
+            'description'   => 'High brightness 12V LED module for channel letters.',
+            'category'      => 'Electrical',
+            'sub_category'  => 'Lighting',
+            'uom'           => 'Pcs',
+            'reorder_level' => 500,
+            'current_stock' => 200,
+            'hsn_code'      => '85414020',
+            'tax_rate'      => 18.00,
+            'unit_cost'     => 15.00,
+            'is_active'     => 1,
+            'created_by'    => $adminUser->id,
+        ]);
+
+        // 62. Seed Stock Alerts
+        \App\Models\StockAlert::create([
+            'item_id'       => $item2->id,
+            'current_qty'   => 200,
+            'reorder_level' => 500,
+            'alert_type'    => 'low_stock',
+            'is_resolved'   => 0,
+            'created_by'    => $adminUser->id,
+        ]);
+
+        // 63. Seed Vendors
+        $vendor1 = \App\Models\Vendor::create([
+            'name'           => 'Global Sign Supplies',
+            'contact_person' => 'Rajesh Kumar',
+            'phone'          => '9988776655',
+            'email'          => 'sales@globalsign.in',
+            'gstin'          => '27AAACG1234H1Z5',
+            'address'        => 'Industrial Estate, Andheri East',
+            'city'           => 'Mumbai',
+            'state'          => 'Maharashtra',
+            'credit_days'    => 30,
+            'status'         => 'active',
+            'created_by'     => $adminUser->id,
+        ]);
+
+        // 64. Seed Vendor Quotations
+        \App\Models\VendorQuotation::create([
+            'vendor_id'    => $vendor1->id,
+            'item_id'      => $item1->id,
+            'quoted_price' => 115.00,
+            'min_qty'      => 500,
+            'lead_days'    => 3,
+            'valid_till'   => now()->addDays(30)->toDateString(),
+            'notes'        => 'Special discount for bulk purchase.',
+            'created_by'   => $adminUser->id,
+        ]);
+
+        // 65. Seed Purchase Requests
+        $pr1 = \App\Models\PurchaseRequest::create([
+            'order_id'      => $order1->id,
+            'department_id' => $deptDesign->id,
+            'requested_by'  => $adminUser->id,
+            'pr_number'     => 'PR-0001',
+            'required_by'   => now()->addDays(5)->toDateString(),
+            'status'        => 'approved',
+            'approved_by'   => $adminUser->id,
+            'approved_at'   => now(),
+            'remarks'       => 'Required for Order ORD-001 production.',
+            'created_by'    => $adminUser->id,
+        ]);
+
+        // 66. Seed PR Items
+        \App\Models\PurchaseRequestItem::create([
+            'purchase_request_id' => $pr1->id,
+            'item_id'             => $item1->id,
+            'qty'                 => 200,
+            'notes'               => 'ACM panels for fascia.',
+            'created_by'          => $adminUser->id,
+        ]);
+
+        // 67. Seed Purchase Orders
+        $po1 = \App\Models\PurchaseOrder::create([
+            'vendor_id'           => $vendor1->id,
+            'purchase_request_id' => $pr1->id,
+            'po_number'           => 'PO-26001',
+            'total_amount'        => 24000.00,
+            'tax_amount'          => 4320.00,
+            'grand_total'         => 28320.00,
+            'expected_delivery'   => now()->addDays(3)->toDateString(),
+            'status'              => 'approved',
+            'approved_by'         => $adminUser->id,
+            'approved_at'         => now(),
+            'created_by'          => $adminUser->id,
+        ]);
+
+        // 68. Seed PO Items
+        \App\Models\PurchaseOrderItem::create([
+            'po_id'        => $po1->id,
+            'item_id'      => $item1->id,
+            'qty'          => 200,
+            'rate'         => 120.00,
+            'tax_rate'     => 18.00,
+            'total'        => 24000.00,
+            'qty_received' => 0,
+            'created_by'   => $adminUser->id,
+        ]);
+
+        // 69. Seed Inventory Transactions
+        \App\Models\InventoryTransaction::create([
+            'item_id'        => $item1->id,
+            'type'           => 'in',
+            'qty'            => 500,
+            'balance_qty'    => 500,
+            'unit_cost'      => 120.00,
+            'total_cost'     => 60000.00,
+            'reference_type' => 'Opening Stock',
+            'date'           => now(),
+            'notes'          => 'Initial stock entry',
+            'created_by'     => $adminUser->id,
+        ]);
+
+        // 70. Seed Material Kitting
+        $kitting1 = \App\Models\MaterialKitting::create([
+            'order_id'           => $order1->id,
+            'production_plan_id' => $productionPlan1->id,
+            'kit_number'         => 'KIT-001',
+            'status'             => 'issued',
+            'issued_at'          => now(),
+            'issued_by'          => $adminUser->id,
+            'created_by'         => $adminUser->id,
+        ]);
+
+        // 71. Seed Kitting Items
+        \App\Models\MaterialKittingItem::create([
+            'kitting_id'   => $kitting1->id,
+            'item_id'      => $item1->id,
+            'required_qty' => 50,
+            'issued_qty'   => 50,
+            'created_by'   => $adminUser->id,
+        ]);
+
+        // 72. Seed Material Consumption
+        \App\Models\MaterialConsumption::create([
+            'order_id'           => $order1->id,
+            'production_plan_id' => $productionPlan1->id,
+            'item_id'            => $item1->id,
+            'consumed_qty'       => 48,
+            'wastage_qty'        => 2,
+            'stage_id'           => $stage2->id,
+            'consumed_by'        => $adminUser->id,
+            'consumed_at'        => now(),
+            'created_by'         => $adminUser->id,
+        ]);
+
+        // 73. Seed Vendor Payments
+        \App\Models\VendorPayment::create([
+            'vendor_id'       => $vendor1->id,
+            'po_id'           => $po1->id,
+            'payment_mode'    => 'Bank Transfer',
+            'amount'          => 14160.00, // 50% advance
+            'transaction_ref' => 'NEFT-1234567890',
+            'payment_date'    => now()->toDateString(),
+            'status'          => 'approved',
+            'approved_by'     => $adminUser->id,
+            'approved_at'     => now(),
+            'created_by'      => $adminUser->id,
+        ]);
     }
 }
 
